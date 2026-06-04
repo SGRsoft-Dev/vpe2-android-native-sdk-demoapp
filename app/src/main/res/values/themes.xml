@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.VPEDemo" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- 다크모드 고정 (시스템 설정 무관). 윈도우/스플래시 배경도 다크. -->
+    <style name="Theme.VPEDemo" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">#121217</item>
+        <item name="android:navigationBarColor">#121217</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
 </resources>
