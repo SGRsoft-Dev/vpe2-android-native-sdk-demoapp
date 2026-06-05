@@ -18,7 +18,7 @@ import com.sgrsoft.vpedemo.DemoPlayerScaffold
 @UnstableApi
 @Composable
 fun DrmDemo() = DemoPlayerScaffold(
-    note = "※ Widevine 은 백엔드 서명 토큰/콘텐츠가 있어야 복호화됩니다. 에뮬레이터는 L3 제한.",
+    note = "PallyCon Widevine 데모 콘텐츠(Big Buck Bunny). 라이선스 요청 헤더(pallycon-customdata-v2)를 패스스루. 에뮬레이터는 L3 제한.",
 ) { accessKey, platform, stage ->
     VpePlayer(
         accessKey = accessKey,
@@ -30,9 +30,11 @@ fun DrmDemo() = DemoPlayerScaffold(
                 mapOf(
                     "drm" to mapOf(
                         "com.widevine.alpha" to mapOf(
-                            "src" to "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd",
-                            "licenseUri" to "https://proxy.example/widevine",
-                            "licenseRequestHeader" to mapOf("x-drm-token" to "BACKEND_SIGNED_TOKEN"),
+                            "src" to "https://contents.pallycon.com/bunny/stream.mpd",
+                            "licenseUri" to "https://license-global.pallycon.com/ri/licenseManager.do",
+                            "licenseRequestHeader" to mapOf(
+                                "pallycon-customdata-v2" to "eyJrZXlfcm90YXRpb24iOmZhbHNlLCJyZXNwb25zZV9mb3JtYXQiOiJvcmlnaW5hbCIsInVzZXJfaWQiOiJ0ZXN0LXVzZXIiLCJkcm1fdHlwZSI6IldpZGV2aW5lIiwic2l0ZV9pZCI6IkRFTU8iLCJoYXNoIjoiRFNEQ0JwWmhJYVR5VG1MMzlCXC9Yb2IyNzRobWpWXC9oWEp4T1V0K29hZ1pjPSIsImNpZCI6ImJpZ2J1Y2tidW5ueSIsInBvbGljeSI6Im41eDI4dVltRGRQQ0ZpbW9NM25HTnc9PSIsInRpbWVzdGFtcCI6IjIwMjEtMDEtMDZUMDk6MjI6MzZaIn0=",
+                            ),
                         ),
                     ),
                 ),
