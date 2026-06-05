@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.PictureInPictureAlt
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material.icons.filled.Public
@@ -52,6 +53,7 @@ import com.sgrsoft.vpedemo.demos.Mp4Demo
 import com.sgrsoft.vpedemo.demos.NowPlayingDemo
 import com.sgrsoft.vpedemo.demos.ObjectFitDemo
 import com.sgrsoft.vpedemo.demos.OttDemo
+import com.sgrsoft.vpedemo.demos.PipDemo
 import com.sgrsoft.vpedemo.demos.RemoteApiDemo
 import com.sgrsoft.vpedemo.demos.ScreenRecordingDemo
 import com.sgrsoft.vpedemo.demos.SubtitleDemo
@@ -78,6 +80,7 @@ enum class DemoScenario(
     SCREEN_REC("ScreenRecordingPrevention", "화면 녹화/캡처 방지 (FLAG_SECURE)", androidx.compose.material.icons.Icons.Filled.VisibilityOff),
     NOW_PLAYING("Now Playing", "MediaSession 메타데이터", androidx.compose.material.icons.Icons.Filled.MusicNote),
     OBJECT_FIT("ObjectFit cover", "비디오 채움 모드", androidx.compose.material.icons.Icons.Filled.AspectRatio),
+    PIP("Picture-in-Picture", "홈/백그라운드 시 자동 PiP", androidx.compose.material.icons.Icons.Filled.PictureInPictureAlt),
     REMOTE_API("원격 API 데모", "서버 옵션 JSON 수신 → 재생", androidx.compose.material.icons.Icons.Filled.Public);
 }
 
@@ -158,13 +161,16 @@ private fun ScenarioCard(s: DemoScenario, onClick: () -> Unit) {
 @Composable
 fun ScenarioScaffold(scenario: DemoScenario, onBack: () -> Unit) {
     Column(Modifier.fillMaxSize().background(DemoTheme.appBackground)) {
-        Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.08f)).clickable { onBack() },
-                contentAlignment = Alignment.Center,
-            ) { Icon(androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack, "back", tint = DemoTheme.textPrimary) }
-            Spacer(Modifier.size(8.dp))
-            Text(scenario.title, color = DemoTheme.textPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        // PiP 중엔 앱바 숨김 — 비디오만 보이도록.
+        if (!PipUiState.inPip) {
+            Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.08f)).clickable { onBack() },
+                    contentAlignment = Alignment.Center,
+                ) { Icon(androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack, "back", tint = DemoTheme.textPrimary) }
+                Spacer(Modifier.size(8.dp))
+                Text(scenario.title, color = DemoTheme.textPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            }
         }
         when (scenario) {
             DemoScenario.BASIC -> BasicConfigDemo()
@@ -179,6 +185,7 @@ fun ScenarioScaffold(scenario: DemoScenario, onBack: () -> Unit) {
             DemoScenario.SCREEN_REC -> ScreenRecordingDemo()
             DemoScenario.NOW_PLAYING -> NowPlayingDemo()
             DemoScenario.OBJECT_FIT -> ObjectFitDemo()
+            DemoScenario.PIP -> PipDemo()
             DemoScenario.REMOTE_API -> RemoteApiDemo()
         }
     }

@@ -1,5 +1,6 @@
 package com.sgrsoft.vpedemo
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -21,8 +22,19 @@ import androidx.media3.common.util.UnstableApi
  * VPE Android 데모 — iOS VPEDemo 시나리오 대응. **다크모드 고정.**
  * 간단 state 기반 네비게이션(외부 nav 의존 없음).
  */
+/** PiP 모드 여부(전역). MainActivity 가 갱신하고, 스캐폴드가 읽어 PiP 중엔 플레이어만 남긴다. */
+object PipUiState {
+    var inPip by mutableStateOf(false)
+}
+
 @UnstableApi
 class MainActivity : ComponentActivity() {
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        // PiP 진입/이탈 → 데모 크롬(앱바/설정) 표시 토글.
+        PipUiState.inPip = isInPictureInPictureMode
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DemoSettings.init(this)   // 영속된 Configuration(platform/stage/accessKey) 로드
@@ -40,7 +52,9 @@ class MainActivity : ComponentActivity() {
                 // Surface(다크 배경)는 시스템 바 뒤까지 채우고(edge-to-edge), 실제 콘텐츠는
                 // safeDrawingPadding 으로 상태바/내비바/컷아웃을 피해 안전영역 안에만 그린다.
                 Surface(modifier = Modifier.fillMaxSize(), color = DemoTheme.appBackground) {
-                    Box(Modifier.fillMaxSize().safeDrawingPadding()) {
+                    // PiP 중엔 비디오가 창을 가득 채우도록 안전영역 패딩 제거.
+                    val safe = if (PipUiState.inPip) Modifier else Modifier.safeDrawingPadding()
+                    Box(Modifier.fillMaxSize().then(safe)) {
                         var current by remember { mutableStateOf<DemoScenario?>(null) }
                         val scenario = current
                         if (scenario == null) {

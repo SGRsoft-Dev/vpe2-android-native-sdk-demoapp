@@ -50,6 +50,9 @@ fun DemoPlayerScaffold(
         // 적용 시 key(reloadToken)로 강제 재생성 (VpePlayer 도 accessKey/platform/stage 변경 시 재생성).
         key(reloadToken) { player(DemoSettings.accessKey, DemoSettings.platform, DemoSettings.stage) }
 
+        // PiP 중엔 플레이어만 남기고 설명/Configuration 패널을 숨긴다.
+        if (PipUiState.inPip) return@Column
+
         note?.let {
             Text(it, color = DemoTheme.textTertiary, fontSize = 11.sp,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
