@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.Subtitles
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +54,7 @@ import com.sgrsoft.vpedemo.demos.LiveDemo
 import com.sgrsoft.vpedemo.demos.Mp4Demo
 import com.sgrsoft.vpedemo.demos.NowPlayingDemo
 import com.sgrsoft.vpedemo.demos.ObjectFitDemo
+import com.sgrsoft.vpedemo.demos.OneClickDrmDemo
 import com.sgrsoft.vpedemo.demos.OttDemo
 import com.sgrsoft.vpedemo.demos.PipDemo
 import com.sgrsoft.vpedemo.demos.RemoteApiDemo
@@ -80,6 +82,7 @@ enum class DemoScenario(
     DASH("DASH", "ExoPlayer DASH 재생 (iOS 미지원)", androidx.compose.material.icons.Icons.Filled.Stream),
     MP4("MP4", "프로그레시브 MP4", androidx.compose.material.icons.Icons.Filled.Movie),
     DRM("DRM (Widevine)", "헤더 패스스루 DRM 재생", androidx.compose.material.icons.Icons.Filled.Lock),
+    MULTI_DRM("원클릭 멀티 DRM", "백엔드 통신 → Widevine 재생", androidx.compose.material.icons.Icons.Filled.VpnKey),
     SCREEN_REC("ScreenRecordingPrevention", "화면 녹화/캡처 방지 (FLAG_SECURE)", androidx.compose.material.icons.Icons.Filled.VisibilityOff),
     NOW_PLAYING("Now Playing", "MediaSession 메타데이터", androidx.compose.material.icons.Icons.Filled.MusicNote),
     OBJECT_FIT("ObjectFit cover", "비디오 채움 모드", androidx.compose.material.icons.Icons.Filled.AspectRatio),
@@ -186,6 +189,7 @@ fun ScenarioScaffold(scenario: DemoScenario, onBack: () -> Unit) {
             DemoScenario.DASH -> DashDemo()
             DemoScenario.MP4 -> Mp4Demo()
             DemoScenario.DRM -> DrmDemo()
+            DemoScenario.MULTI_DRM -> OneClickDrmDemo()
             DemoScenario.SCREEN_REC -> ScreenRecordingDemo()
             DemoScenario.NOW_PLAYING -> NowPlayingDemo()
             DemoScenario.OBJECT_FIT -> ObjectFitDemo()
