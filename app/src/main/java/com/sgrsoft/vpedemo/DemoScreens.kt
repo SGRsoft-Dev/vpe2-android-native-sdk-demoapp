@@ -14,12 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.draw.clip
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.AspectRatio
@@ -36,34 +32,35 @@ import androidx.compose.material.icons.filled.Subtitles
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.key
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
-import com.navercloud.vpe.player.VpePlayer
-import com.navercloud.vpe.player.VpePlayerController
-import com.navercloud.vpe.player.ui.VpePlayerView
+import com.sgrsoft.vpedemo.demos.BasicConfigDemo
+import com.sgrsoft.vpedemo.demos.DashDemo
+import com.sgrsoft.vpedemo.demos.DrmDemo
+import com.sgrsoft.vpedemo.demos.ImperativeDemo
+import com.sgrsoft.vpedemo.demos.LiveDemo
+import com.sgrsoft.vpedemo.demos.Mp4Demo
+import com.sgrsoft.vpedemo.demos.NowPlayingDemo
+import com.sgrsoft.vpedemo.demos.ObjectFitDemo
+import com.sgrsoft.vpedemo.demos.OttDemo
+import com.sgrsoft.vpedemo.demos.RemoteApiDemo
+import com.sgrsoft.vpedemo.demos.ScreenRecordingDemo
+import com.sgrsoft.vpedemo.demos.SubtitleDemo
+import com.sgrsoft.vpedemo.demos.WatermarkDemo
 
-/** 데모 시나리오 (iOS VPEDemo 대응). */
+/**
+ * 데모 시나리오 메타데이터(목록 카드용). 실제 예제 코드는 `demos/` 패키지의 시나리오별 파일에 있다.
+ * 예) [DemoScenario.WATERMARK] → `demos/WatermarkDemo.kt` 의 [WatermarkDemo].
+ */
 enum class DemoScenario(
     val title: String,
     val desc: String,
@@ -153,6 +150,10 @@ private fun ScenarioCard(s: DemoScenario, onClick: () -> Unit) {
     }
 }
 
+/**
+ * 선택한 시나리오의 화면(뒤로가기 헤더 + 예제 본문)을 그린다.
+ * 각 분기는 `demos/` 패키지의 해당 예제 컴포저블 하나만 호출한다 — 예제 코드는 그 파일을 보면 된다.
+ */
 @UnstableApi
 @Composable
 fun ScenarioScaffold(scenario: DemoScenario, onBack: () -> Unit) {
@@ -161,150 +162,24 @@ fun ScenarioScaffold(scenario: DemoScenario, onBack: () -> Unit) {
             Box(
                 modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.08f)).clickable { onBack() },
                 contentAlignment = Alignment.Center,
-            ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "back", tint = DemoTheme.textPrimary) }
+            ) { Icon(androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack, "back", tint = DemoTheme.textPrimary) }
             Spacer(Modifier.size(8.dp))
             Text(scenario.title, color = DemoTheme.textPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
         when (scenario) {
-            DemoScenario.BASIC -> BasicConfigScreen()
-            DemoScenario.IMPERATIVE -> Box(Modifier.padding(8.dp)) { ImperativeDemo() }
-            DemoScenario.LIVE -> SimpleDemo(mapOf("autostart" to true, "muted" to true,
-                "playlist" to listOf(mapOf("file" to DemoConfig.LIVE))))
-            DemoScenario.WATERMARK -> SimpleDemo(mapOf("autostart" to true, "muted" to true,
-                "visibleWatermark" to true, "watermarkText" to "NAVER CLOUD",
-                "watermarkConfig" to mapOf("randPosition" to true, "randPositionInterVal" to 3000, "opacity" to 0.6),
-                "playlist" to listOf(mapOf("file" to DemoConfig.HLS))))
-            DemoScenario.OTT -> SimpleDemo(mapOf("autostart" to true, "muted" to true,
-                "playlist" to listOf(mapOf("file" to DemoConfig.HLS_VOD,
-                    "intro" to mapOf("start" to "00:02", "duration" to 8.0), "ageRating" to "15"))))
-            DemoScenario.SUBTITLE_VTT -> SimpleDemo(mapOf("autostart" to true, "muted" to true,
-                "playlist" to listOf(mapOf("file" to DemoConfig.MP4,
-                    "vtt" to listOf(mapOf("id" to "en", "file" to DemoConfig.VTT, "label" to "English"))))))
-            DemoScenario.DASH -> SimpleDemo(mapOf("autostart" to true, "muted" to true,
-                "playlist" to listOf(mapOf("file" to DemoConfig.DASH))))
-            DemoScenario.MP4 -> SimpleDemo(mapOf("autostart" to true, "muted" to true,
-                "playlist" to listOf(mapOf("file" to DemoConfig.MP4))))
-            DemoScenario.DRM -> Box(Modifier.padding(8.dp)) { DrmDemo() }
-            DemoScenario.SCREEN_REC -> SimpleDemo(mapOf("autostart" to true, "muted" to true,
-                "screenRecordingPrevention" to true, "playlist" to listOf(mapOf("file" to DemoConfig.HLS))))
-            DemoScenario.NOW_PLAYING -> SimpleDemo(mapOf("autostart" to true,
-                "enableNowPlayingPlaybackState" to true,
-                "playlist" to listOf(mapOf("file" to DemoConfig.MP4,
-                    "description" to mapOf("title" to "Big Buck Bunny", "profile_name" to "Blender")))))
-            DemoScenario.OBJECT_FIT -> SimpleDemo(mapOf("autostart" to true, "muted" to true,
-                "objectFit" to "cover", "playlist" to listOf(mapOf("file" to DemoConfig.HLS))))
-            DemoScenario.REMOTE_API -> Text(
-                "서버에서 옵션 JSON 을 받아 VpePlayer(accessKey, optionsJson = serverJson) 로 전달하세요. 느슨한 JSON 파싱 지원.",
-                color = DemoTheme.textSecondary, modifier = Modifier.padding(16.dp))
+            DemoScenario.BASIC -> BasicConfigDemo()
+            DemoScenario.IMPERATIVE -> ImperativeDemo()
+            DemoScenario.LIVE -> LiveDemo()
+            DemoScenario.WATERMARK -> WatermarkDemo()
+            DemoScenario.OTT -> OttDemo()
+            DemoScenario.SUBTITLE_VTT -> SubtitleDemo()
+            DemoScenario.DASH -> DashDemo()
+            DemoScenario.MP4 -> Mp4Demo()
+            DemoScenario.DRM -> DrmDemo()
+            DemoScenario.SCREEN_REC -> ScreenRecordingDemo()
+            DemoScenario.NOW_PLAYING -> NowPlayingDemo()
+            DemoScenario.OBJECT_FIT -> ObjectFitDemo()
+            DemoScenario.REMOTE_API -> RemoteApiDemo()
         }
-    }
-}
-
-/** "기본 플레이어 구성" — iOS BasicPlayerView 와 동일 (플레이어 + App Info + Configuration). */
-@UnstableApi
-@Composable
-private fun BasicConfigScreen() {
-    val context = LocalContext.current
-    val clipboard = LocalClipboardManager.current
-    val bundleId = context.packageName
-
-    var platform by remember { mutableStateOf("pub") }
-    var stage by remember { mutableStateOf("real") }
-    val licenseKey = remember { mutableStateOf(TextFieldValue(DemoConfig.ACCESS_KEY)) }
-
-    var appliedPlatform by remember { mutableStateOf("pub") }
-    var appliedStage by remember { mutableStateOf("real") }
-    var appliedKey by remember { mutableStateOf(DemoConfig.ACCESS_KEY) }
-    var reloadToken by remember { mutableIntStateOf(0) }
-
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        // web <VpePlayer accessKey= options= /> 와 동일. 적용 시 key(reloadToken)로 재생성.
-        Box(Modifier.fillMaxWidth().background(Color.Black)) {
-            key(reloadToken) {
-                VpePlayer(
-                    accessKey = appliedKey,
-                    optionsJson = DemoConfig.OPTIONS_JSON,
-                    platform = appliedPlatform,
-                    stage = appliedStage,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
-
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            DemoCard(Icons.Filled.Info, "App Info") {
-                DemoLabeledField("Bundle Identifier") {
-                    DemoReadonlyWithAction(bundleId, "복사") {
-                        clipboard.setText(AnnotatedString(bundleId))
-                    }
-                }
-            }
-            DemoCard(Icons.Filled.Tune, "Configuration") {
-                DemoLabeledField("Platform") {
-                    DemoSegmented(listOf("pub" to "pub", "gov" to "gov"), platform) { platform = it }
-                }
-                DemoLabeledField("Stage") {
-                    DemoSegmented(listOf("real" to "real", "beta" to "beta"), stage) { stage = it }
-                }
-                DemoLabeledField("License Key (AccessKey)") {
-                    DemoFieldWithAction(licenseKey, "적용") {
-                        appliedKey = licenseKey.value.text
-                        appliedPlatform = platform
-                        appliedStage = stage
-                        reloadToken++
-                    }
-                }
-            }
-            Spacer(Modifier.height(16.dp))
-        }
-    }
-}
-
-/** 패턴 A — 간편 컴포넌트. */
-@UnstableApi
-@Composable
-private fun SimpleDemo(options: Map<String, Any?>) {
-    VpePlayer(accessKey = DemoConfig.ACCESS_KEY, options = options, modifier = Modifier.fillMaxWidth().padding(8.dp))
-}
-
-/** 패턴 B — 컨트롤러 직접 보유 + 커스텀 컨트롤. */
-@UnstableApi
-@Composable
-private fun ImperativeDemo() {
-    val context = LocalContext.current
-    val controller = remember {
-        VpePlayerController.fromMap(
-            context = context,
-            options = mapOf("autostart" to false, "controls" to false, "aspectRatio" to "16:9",
-                "playlist" to listOf(mapOf("file" to DemoConfig.HLS))),
-            accessKey = DemoConfig.ACCESS_KEY,
-        )
-    }
-    val state by controller.state.collectAsStateWithLifecycle()
-
-    Column {
-        VpePlayerView(controller = controller, showBuiltinControls = false, modifier = Modifier.fillMaxWidth())
-        Spacer(Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            DemoActionButton("재생") { controller.play() }
-            DemoActionButton("일시정지") { controller.pause() }
-            DemoActionButton("+10s") { controller.seekTo(state.currentTime + 10) }
-        }
-        Text(if (state.isPlaying) "재생중 ${state.currentTime.toInt()}s" else "정지",
-            color = DemoTheme.textSecondary, modifier = Modifier.padding(top = 8.dp))
-    }
-}
-
-@UnstableApi
-@Composable
-private fun DrmDemo() {
-    Column {
-        SimpleDemo(mapOf("autostart" to true,
-            "playlist" to listOf(mapOf("drm" to mapOf("com.widevine.alpha" to mapOf(
-                "src" to DemoConfig.DASH,
-                "licenseUri" to "https://proxy.example/widevine",
-                "licenseRequestHeader" to mapOf("x-drm-token" to "BACKEND_SIGNED_TOKEN")))))))
-        Text("※ Widevine 은 백엔드 서명 토큰/콘텐츠가 있어야 복호화됩니다. 에뮬레이터는 L3 제한.",
-            color = DemoTheme.textTertiary, fontSize = 11.sp, modifier = Modifier.padding(8.dp))
     }
 }
