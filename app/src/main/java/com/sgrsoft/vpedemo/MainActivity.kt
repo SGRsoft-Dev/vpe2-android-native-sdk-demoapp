@@ -38,6 +38,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DemoSettings.init(this)   // 영속된 Configuration(platform/stage/accessKey) 로드
+        // Android 13+: Now Playing 미디어 알림(잠금화면 컨트롤) 표시에 필요한 알림 권한 요청.
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+        }
         setContent {
             // 시스템 설정과 무관하게 항상 다크 테마.
             MaterialTheme(
