@@ -8,15 +8,14 @@ import com.navercloud.vpe.player.VpePlayer
 import com.sgrsoft.vpedemo.DemoPlayerScaffold
 
 /**
- * 자막(VTT) 데모 — 외부 사이드카 자막.
+ * 자막(SRT) 데모 — 외부 사이드카 SRT 자막.
  *
- * 플레이리스트 항목의 `vtt` 배열에 트랙을 지정하면 자막 버튼으로 on/off·언어 선택이 가능하다.
- * 각 트랙: `id`(고유 키) · `file`(.vtt URL) · `label`(표시명) · `default`(기본 선택 여부, 선택).
- * 자막 스타일은 시스템 접근성 자막 환경설정(설정 > 접근성 > 자막)을 따른다.
+ * VTT 대신 `srt` 배열로 SubRip(.srt) 트랙을 지정한다(스키마는 vtt 와 동일: id/file/label/default).
+ * vtt 가 비어 있으면 `effectiveSubtitles` 가 srt 를 사용한다.
  */
 @UnstableApi
 @Composable
-fun SubtitleDemo() = DemoPlayerScaffold { accessKey, platform, stage ->
+fun SrtDemo() = DemoPlayerScaffold { accessKey, platform, stage ->
     VpePlayer(
         accessKey = accessKey,
         platform = platform,
@@ -27,9 +26,9 @@ fun SubtitleDemo() = DemoPlayerScaffold { accessKey, platform, stage ->
             "playlist" to listOf(
                 mapOf(
                     "file" to "https://u6dwfh2w5883.edge.naverncp.com/hls/-EQTX8kk3dFTfezHSE0rcg__/vodstation/vod-abr-test/j5IXBfIJ83893893_1080p_,AVC_SD_1Pass_30fps_1,AVC_HD_1Pass_30fps,AVC_FHD_1Pass_30fps,.mp4.smil/master.m3u8",
-                    "vtt" to listOf(
-                        mapOf("id" to "ko", "file" to "https://player.vpe.naverncp.com/vtt/ncp_overview_script_kr_v2.vtt", "label" to "한국어", "default" to true),
-                        mapOf("id" to "en", "file" to "https://player.vpe.naverncp.com/vtt/ncp_overview_script_en_v2.vtt", "label" to "English"),
+                    "srt" to listOf(
+                        mapOf("id" to "ko", "file" to "https://player.vpe.naverncp.com/srt/ncp_overview_script_kr_v2.srt", "label" to "한국어", "default" to true),
+                        mapOf("id" to "en", "file" to "https://player.vpe.naverncp.com/srt/ncp_overview_script_en_v2.srt", "label" to "English"),
                     ),
                 ),
             ),

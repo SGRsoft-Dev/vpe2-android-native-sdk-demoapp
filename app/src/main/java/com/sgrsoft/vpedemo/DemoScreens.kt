@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.BrandingWatermark
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.ClosedCaption
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.MusicNote
@@ -56,6 +57,7 @@ import com.sgrsoft.vpedemo.demos.OttDemo
 import com.sgrsoft.vpedemo.demos.PipDemo
 import com.sgrsoft.vpedemo.demos.RemoteApiDemo
 import com.sgrsoft.vpedemo.demos.ScreenRecordingDemo
+import com.sgrsoft.vpedemo.demos.SrtDemo
 import com.sgrsoft.vpedemo.demos.SubtitleDemo
 import com.sgrsoft.vpedemo.demos.WatermarkDemo
 
@@ -74,6 +76,7 @@ enum class DemoScenario(
     WATERMARK("워터마크", "무작위 이동 워터마크", androidx.compose.material.icons.Icons.Filled.BrandingWatermark),
     OTT("OTT 기능", "스킵 버튼 · 연령등급/콘텐츠 경고", androidx.compose.material.icons.Icons.Filled.Tv),
     SUBTITLE_VTT("자막 (VTT)", "외부 사이드카 자막", androidx.compose.material.icons.Icons.Filled.Subtitles),
+    SUBTITLE_SRT("자막 (SRT)", "외부 사이드카 SRT 자막", androidx.compose.material.icons.Icons.Filled.ClosedCaption),
     DASH("DASH", "ExoPlayer DASH 재생 (iOS 미지원)", androidx.compose.material.icons.Icons.Filled.Stream),
     MP4("MP4", "프로그레시브 MP4", androidx.compose.material.icons.Icons.Filled.Movie),
     DRM("DRM (Widevine)", "헤더 패스스루 DRM 재생", androidx.compose.material.icons.Icons.Filled.Lock),
@@ -179,6 +182,7 @@ fun ScenarioScaffold(scenario: DemoScenario, onBack: () -> Unit) {
             DemoScenario.WATERMARK -> WatermarkDemo()
             DemoScenario.OTT -> OttDemo()
             DemoScenario.SUBTITLE_VTT -> SubtitleDemo()
+            DemoScenario.SUBTITLE_SRT -> SrtDemo()
             DemoScenario.DASH -> DashDemo()
             DemoScenario.MP4 -> Mp4Demo()
             DemoScenario.DRM -> DrmDemo()
