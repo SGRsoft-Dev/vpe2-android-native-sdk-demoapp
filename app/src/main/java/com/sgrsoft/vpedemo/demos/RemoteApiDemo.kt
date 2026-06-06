@@ -19,7 +19,10 @@ private const val SERVER_OPTIONS_JSON = """
   autostart: true,
   muted: true,
   playlist: [
-    { file: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
+    {
+      file: "https://u6dwfh2w5883.edge.naverncp.com/hls/-EQTX8kk3dFTfezHSE0rcg__/vodstation/vod-abr-test/j5IXBfIJ83893893_1080p_,AVC_SD_1Pass_30fps_1,AVC_HD_1Pass_30fps,AVC_FHD_1Pass_30fps,.mp4.smil/master.m3u8",
+      description: { title: "원격 API 샘플", profile_name: "네이버클라우드" },
+    },
   ],
 }
 """
