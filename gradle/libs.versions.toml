@@ -1,6 +1,6 @@
 [versions]
 # 데모가 소비하는 VPE SDK 버전 (sdk/gradle/libs.versions.toml 의 vpe 와 정합)
-vpeSdk = "2.0.0"
+vpeSdk = "2.0.1"
 
 agp = "8.5.2"
 kotlin = "2.0.21"
@@ -10,7 +10,8 @@ activityCompose = "1.9.2"
 composeBom = "2024.09.03"
 
 [libraries]
-vpe-player = { group = "com.navercloud.vpe", name = "player", version.ref = "vpeSdk" }
+# REMOTE: JitPack 좌표(com.github.<user>:<repo>). LOCAL(.local.env) 이면 settings 가 :sdk 로 치환.
+vpe-player = { group = "com.github.SGRsoft-Dev", name = "vpe2-android-native-sdk", version.ref = "vpeSdk" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }

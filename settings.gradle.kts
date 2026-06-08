@@ -19,8 +19,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // remote 모드(.local.env 없음): SDK 를 mavenLocal 좌표(com.navercloud.vpe:player)로 소비
-        mavenLocal()
+        // remote 모드(.local.env 없음): SDK 를 JitPack 에서 소비
+        // (com.github.SGRsoft-Dev:vpe2-android-native-sdk)
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
@@ -28,21 +29,31 @@ rootProject.name = "VPEDemo"
 include(":app")
 
 // ── SDK 참조 모드 토글 (iOS select-sdk.sh 대응) ─────────────────────────
-// `.local.env` 가 있으면 → 루트 빌드(..)를 composite(includeBuild)로 참조(로컬 개발).
-//   루트 빌드가 버전 카탈로그(gradle/libs.versions.toml)와 :sdk 모듈을 보유하므로
-//   sdk 디렉토리 단독이 아니라 루트(..)를 포함해야 한다. includeBuild 가
-//   com.navercloud.vpe:player 좌표를 :sdk 프로젝트로 자동 치환(dependency substitution).
-// `.local.env` 가 없으면 → mavenLocal 의 발행된 AAR 을 소비(배포 검증).
+// `.local.env` 에 `VPE_SDK_PATH=../sdk` 가 있으면 → 그 SDK 경로의 루트 빌드를
+//   composite(includeBuild)로 참조(로컬 개발). 없으면 → JitPack 발행본 소비(REMOTE).
+//
+// SDK 디렉토리(../sdk) 단독은 standalone 빌드가 아니라(루트가 버전 카탈로그+:sdk 모듈 보유)
+// 그 부모(루트)를 includeBuild 하고, JitPack 좌표를 :sdk 프로젝트로 명시 치환한다.
+// `.local.env` 는 .gitignore 됨 → 저장소 기본 상태는 항상 REMOTE(JitPack).
 val localEnv = File(rootDir, ".local.env")
-if (localEnv.exists()) {
-    println("▶ VPE SDK: LOCAL (composite build .. → :sdk)")
-    // 명시적 치환: 의존성 좌표(com.navercloud.vpe:player)를 루트 빌드의 :sdk 프로젝트로 매핑.
-    // (자동 치환은 프로젝트명 'sdk' 로 매칭하므로 'player' 좌표와 어긋나 mavenLocal 로 폴백함)
-    includeBuild("..") {
+val sdkPath: String? = if (localEnv.exists()) {
+    localEnv.readLines()
+        .map { it.trim() }
+        .firstOrNull { it.startsWith("VPE_SDK_PATH=") }
+        ?.substringAfter("=")?.trim()
+        ?.takeIf { it.isNotEmpty() }
+} else null
+
+if (sdkPath != null) {
+    val sdkDir = File(rootDir, sdkPath)
+    val rootBuild = sdkDir.parentFile
+        ?: error("VPE_SDK_PATH 의 부모(루트 빌드)를 찾을 수 없습니다: $sdkPath")
+    println("▶ VPE SDK: LOCAL (composite ${rootBuild.name} → :sdk, VPE_SDK_PATH=$sdkPath)")
+    includeBuild(rootBuild) {
         dependencySubstitution {
-            substitute(module("com.navercloud.vpe:player")).using(project(":sdk"))
+            substitute(module("com.github.SGRsoft-Dev:vpe2-android-native-sdk")).using(project(":sdk"))
         }
     }
 } else {
-    println("▶ VPE SDK: REMOTE (mavenLocal com.navercloud.vpe:player)")
+    println("▶ VPE SDK: REMOTE (JitPack com.github.SGRsoft-Dev:vpe2-android-native-sdk)")
 }
