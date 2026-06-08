@@ -10,8 +10,8 @@ activityCompose = "1.9.2"
 composeBom = "2024.09.03"
 
 [libraries]
-# REMOTE: JitPack 좌표(com.github.<user>:<repo>). LOCAL(.local.env) 이면 settings 가 :sdk 로 치환.
-vpe-player = { group = "com.github.SGRsoft-Dev", name = "vpe2-android-native-sdk", version.ref = "vpeSdk" }
+# REMOTE: AAR 전용 배포 저장소(raw GitHub Maven) 좌표. LOCAL(.local.env) 이면 settings 가 :sdk 로 치환.
+vpe-player = { group = "com.navercloud.vpe", name = "player", version.ref = "vpeSdk" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }

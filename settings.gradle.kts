@@ -19,9 +19,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // remote 모드(.local.env 없음): SDK 를 JitPack 에서 소비
-        // (com.github.SGRsoft-Dev:vpe2-android-native-sdk)
-        maven { url = uri("https://jitpack.io") }
+        // remote 모드(.local.env 없음): AAR 전용 배포 저장소(raw GitHub Maven)에서 소비
+        // (소스 없이 aar+pom 만. 좌표 com.navercloud.vpe:player)
+        maven { url = uri("https://raw.githubusercontent.com/SGRsoft-Dev/vpe2-android-native-sdk-dist/main") }
     }
 }
 
@@ -51,9 +51,9 @@ if (sdkPath != null) {
     println("▶ VPE SDK: LOCAL (composite ${rootBuild.name} → :sdk, VPE_SDK_PATH=$sdkPath)")
     includeBuild(rootBuild) {
         dependencySubstitution {
-            substitute(module("com.github.SGRsoft-Dev:vpe2-android-native-sdk")).using(project(":sdk"))
+            substitute(module("com.navercloud.vpe:player")).using(project(":sdk"))
         }
     }
 } else {
-    println("▶ VPE SDK: REMOTE (JitPack com.github.SGRsoft-Dev:vpe2-android-native-sdk)")
+    println("▶ VPE SDK: REMOTE (dist raw-maven com.navercloud.vpe:player)")
 }
