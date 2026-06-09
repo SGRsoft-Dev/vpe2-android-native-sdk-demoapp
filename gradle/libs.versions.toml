@@ -1,6 +1,6 @@
 [versions]
 # 데모가 소비하는 VPE SDK 버전 (sdk/gradle/libs.versions.toml 의 vpe 와 정합)
-vpeSdk = "2.0.1"
+vpeSdk = "2.0.2"
 
 agp = "8.5.2"
 kotlin = "2.0.21"
