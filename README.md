@@ -41,6 +41,35 @@
 | **Picture-in-Picture** | 홈/백그라운드 이탈 시 자동 PiP 진입 | [`demos/PipDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/PipDemo.kt) |
 | **원격 API 데모** | 백엔드에서 받은 옵션 JSON(playlist 포함)으로 재생 | [`demos/RemoteApiDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/RemoteApiDemo.kt) |
 
+## SDK 설치 (내 앱에 통합)
+
+데모에서 본 SDK 를 직접 프로젝트에 추가하려면 — 배포 저장소(raw GitHub Maven)에서 소비합니다.
+**인증 토큰 불필요**, 컴파일된 `aar` 만 받습니다(소스 비공개).
+
+```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://raw.githubusercontent.com/SGRsoft-Dev/vpe2-android-native-sdk/master") }
+    }
+}
+```
+```kotlin
+// app/build.gradle.kts
+dependencies {
+    implementation("com.navercloud.vpe:player:2.0.1")
+}
+```
+
+- 요구사항: **minSdk 24** · **JDK 17** · Kotlin 2.0 · Jetpack Compose
+- 공개 API 는 Media3 `@UnstableApi` 표면을 노출 → 호출부에 `@OptIn(UnstableApi::class)` 필요
+- 재생에는 유효한 NCP `accessKey`(결제 계정)가 필요(무효·미결제 키는 E0001 차단)
+- 전체 옵션/메서드/에러 코드 등 상세 사용법: **[vpe2-android-native-sdk README](https://github.com/SGRsoft-Dev/vpe2-android-native-sdk)**
+
+> 이 데모앱은 위와 동일한 배포 AAR(`2.0.1`)을 소비하도록 구성되어 있습니다.
+
 ## 통합 패턴 빠르게 보기
 
 - **간편 Composable** (옵션만 넘기면 끝): [`demos/BasicConfigDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/BasicConfigDemo.kt)
