@@ -21,7 +21,7 @@ dependencyResolutionManagement {
         mavenCentral()
         // remote 모드(.local.env 없음): AAR 전용 배포 저장소(raw GitHub Maven)에서 소비
         // (소스 없이 aar+pom 만. 좌표 com.navercloud.vpe:player)
-        maven { url = uri("https://raw.githubusercontent.com/SGRsoft-Dev/vpe2-android-native-sdk-dist/main") }
+        maven { url = uri("https://raw.githubusercontent.com/SGRsoft-Dev/vpe2-android-native-sdk/master") }
     }
 }
 
