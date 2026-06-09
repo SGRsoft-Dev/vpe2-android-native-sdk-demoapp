@@ -1,46 +1,53 @@
 # VPE Android 데모앱
 
-`vpe2-ios` VPEDemo 대응 — 시나리오별 데모(Basic/JSON·Imperative·Live·Watermark·OTT·Subtitle(VTT/SRT)·DASH·MP4·DRM·ScreenRec·NowPlaying·ObjectFit·PiP·RemoteApi).
-SDK 소비 방식(로컬 소스 ↔ 배포 AAR)을 토글하며 동작을 검증한다.
+**VPEPlayer Android SDK**(`com.navercloud.vpe:player`)의 사용 예제 모음입니다.
+16개 시나리오로 SDK 의 주요 기능과 통합 패턴을 보여줍니다. SDK 사용법은 배포 저장소
+[vpe2-android-native-sdk](https://github.com/SGRsoft-Dev/vpe2-android-native-sdk) 의 README 를 참고하세요.
 
 ## 실행
 
-1. `app/src/main/java/com/sgrsoft/vpedemo/MainActivity.kt` 의 `DemoConfig.ACCESS_KEY` 를 유효한 NCP access key 로 교체
-   (또는 데모 화면 하단 Configuration 에서 런타임 입력).
-2. SDK 참조 모드 선택 — 아래 `scripts/select-sdk.sh`.
-3. `./gradlew :app:installDebug` 또는 Android Studio 에서 실행.
+1. **access key 설정** — `app/src/main/java/com/sgrsoft/vpedemo/MainActivity.kt` 의
+   `DemoConfig.ACCESS_KEY` 를 유효한 NCP access key 로 교체하거나, 각 데모 화면 하단
+   **Configuration** 에서 런타임 입력합니다.
+2. **빌드/실행**
+   ```bash
+   export JAVA_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null || echo "/Applications/Android Studio.app/Contents/jbr/Contents/Home")"
+   ./gradlew :app:installDebug
+   ```
+   또는 Android Studio 에서 실행. (JDK 17 필요)
 
-```bash
-# JDK 17 필요
-export JAVA_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null || echo "/Applications/Android Studio.app/Contents/jbr/Contents/Home")"
-```
+앱을 실행하면 데모 목록에서 시나리오를 선택해 동작을 확인할 수 있습니다.
 
-## SDK 참조 모드 (`scripts/select-sdk.sh`)
+## 데모 시나리오
 
-`.local.env`(gitignore) 로 전환한다. 파일이 **없으면 기본 REMOTE**.
+각 데모의 전체 코드는 `app/src/main/java/com/sgrsoft/vpedemo/demos/` 에 있습니다.
 
-| 모드 | 조건 | 소비 방식 |
+| 데모 | 보여주는 기능 | 코드 |
 |---|---|---|
-| **LOCAL** | `.local.env` 에 `VPE_SDK_PATH=../sdk` | 해당 경로의 루트를 composite(`includeBuild`) — SDK 소스 직접, 빠른 반복 개발 |
-| **REMOTE** | `.local.env` 없음 | AAR 전용 배포 저장소(raw GitHub Maven)에서 `com.navercloud.vpe:player` 소비 |
+| **기본 플레이어 구성 (JSON)** | 옵션 JSON 한 번으로 재생. 실제 NCP 콘텐츠 + App Info / Configuration UI | [`demos/BasicConfigDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/BasicConfigDemo.kt) |
+| **Imperative Control** | 컨트롤러를 직접 보유(`VpePlayerController`)하고 커스텀 버튼으로 명령형 제어 | [`demos/ImperativeDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/ImperativeDemo.kt) |
+| **라이브 스트림** | 라이브 자동 감지 + LIVE 전용 컨트롤 레이아웃 | [`demos/LiveDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/LiveDemo.kt) |
+| **워터마크** | 무작위 위치로 이동하는 워터마크 오버레이 | [`demos/WatermarkDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/WatermarkDemo.kt) |
+| **OTT 기능** | 인트로/오프닝/엔딩 스킵 버튼 + 연령등급·콘텐츠 경고 고지 | [`demos/OttDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/OttDemo.kt) |
+| **자막 (VTT)** | 외부 사이드카 VTT 자막 (다국어 선택·로컬 영속) | [`demos/SubtitleDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/SubtitleDemo.kt) |
+| **자막 (SRT)** | 외부 사이드카 SRT 자막 | [`demos/SrtDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/SrtDemo.kt) |
+| **DASH** | ExoPlayer DASH(.mpd) 재생 (iOS 미지원, Android 전용) | [`demos/DashDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/DashDemo.kt) |
+| **MP4** | 프로그레시브 MP4 직접 재생 | [`demos/Mp4Demo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/Mp4Demo.kt) |
+| **DRM (Widevine)** | 라이선스 헤더 패스스루 방식 Widevine 재생 | [`demos/DrmDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/DrmDemo.kt) |
+| **One Click Multi DRM** | 백엔드 통신으로 토큰 수신 → Widevine 재생 (NCP Multi-DRM / PallyCon) | [`demos/OneClickDrmDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/OneClickDrmDemo.kt) |
+| **ScreenRecordingPrevention** | 화면 녹화/캡처 방지 (`FLAG_SECURE`) | [`demos/ScreenRecordingDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/ScreenRecordingDemo.kt) |
+| **Now Playing** | MediaSession 메타데이터 + 잠금화면 미디어 컨트롤 | [`demos/NowPlayingDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/NowPlayingDemo.kt) |
+| **ObjectFit cover** | 비디오 채움 모드(`objectFit`) 비교 | [`demos/ObjectFitDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/ObjectFitDemo.kt) |
+| **Picture-in-Picture** | 홈/백그라운드 이탈 시 자동 PiP 진입 | [`demos/PipDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/PipDemo.kt) |
+| **원격 API 데모** | 백엔드에서 받은 옵션 JSON(playlist 포함)으로 재생 | [`demos/RemoteApiDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/RemoteApiDemo.kt) |
 
-```bash
-scripts/select-sdk.sh status            # 현재 모드 출력
-scripts/select-sdk.sh local             # LOCAL (기본 경로 ../sdk)
-scripts/select-sdk.sh local ../other-sdk  # LOCAL (경로 지정)
-scripts/select-sdk.sh remote            # REMOTE (배포 AAR)
-```
+## 통합 패턴 빠르게 보기
 
-REMOTE 가 소비하는 저장소(소스 없이 aar 만 — `settings.gradle.kts` 에 설정됨):
-```kotlin
-maven { url = uri("https://raw.githubusercontent.com/SGRsoft-Dev/vpe2-android-native-sdk/master") }
-implementation("com.navercloud.vpe:player:2.0.1")
-```
+- **간편 Composable** (옵션만 넘기면 끝): [`demos/BasicConfigDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/BasicConfigDemo.kt)
+- **컨트롤러 직접 보유 + 커스텀 UI**: [`demos/ImperativeDemo.kt`](app/src/main/java/com/sgrsoft/vpedemo/demos/ImperativeDemo.kt)
+- 공통 플레이어 스캐폴드: [`DemoPlayerScaffold.kt`](app/src/main/java/com/sgrsoft/vpedemo/DemoPlayerScaffold.kt) · 데모 목록: [`DemoScreens.kt`](app/src/main/java/com/sgrsoft/vpedemo/DemoScreens.kt)
 
-LOCAL 모드에서는 `settings.gradle.kts` 가 위 좌표를 `:sdk` 프로젝트로 dependency-substitution 하므로,
-앱 코드(`libs.vpe.player`)는 그대로 두고 모드만 토글하면 된다.
+## 문의
 
-## 참고
-
-- 데모는 별도 Gradle 빌드(루트 SDK 빌드와 분리). `.local.env` 는 gitignore 되어 저장소 기본 상태는 항상 REMOTE.
-- SDK 자체 사용법은 배포 저장소 [vpe2-android-native-sdk](https://github.com/SGRsoft-Dev/vpe2-android-native-sdk) 의 README 참고.
+- © NAVER Cloud / SGRsoft
+- dev@sgrsoft.com
